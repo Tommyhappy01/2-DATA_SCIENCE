@@ -1,0 +1,15 @@
+Saygideger Hocalarim, SQL icin referans olarak kullandigim bir videoyu paylasmak 
+istiyorum.
+SQL ile ilgli ne zaman orta seviyeye kadar bir konuda soru gelse bu video da kisa,
+ anlasirli bir sekilde cozumunu buldum. Interviewler icin de kisaca genel bir tekrar 
+icin son derece ise yarar bir kaynak.
+Uyari: SQL farkli programlarla kullanildigindan, herbiri birbirine %90 oraninda 
+benzer komutlar icermekle birlikte cok ufak farkliliklar olabilir. Su ana kadar 
+Oracle SQL, PostgreSQL, SQlite, MySQL kullandim, inanin olaganustu bir fark gormedim.
+ O yuzden genel kavramlar icin bu video ins cok isinize yarayacaktir.
+Dersi veren kisinin, ders anlatimi son derece iyi ve temiz bir ingilizcesi var.
+
+SQL son derece kolay ve zevkli bir program, bunu alet cantamiza katmakta fayda var.
+SQL link: https://www.youtube.com/watch?v=7S_tz1z_5bA&list=LL&index=41
+P.S.: Dersi veren ksinin git/github videosunu da surekli github ile ilgili bir sey 
+oldugunda referans olarak kullaniyorum.
