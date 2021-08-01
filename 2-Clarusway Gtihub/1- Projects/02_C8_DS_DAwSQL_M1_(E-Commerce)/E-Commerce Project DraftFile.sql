@@ -8,8 +8,12 @@
 
 --1. Join all the tables and create a new table called combined_table. (market_fact, cust_dimen, orders_dimen, prod_dimen, shipping_dimen)
 
-
-
+SELECT *
+		FROM market_fact B, cust_dimen A, orders_dimen C, prod_dimen D, shipping_dimen E
+		WHERE A.Cust_id=B.Cust_id
+		AND B.ord_id=C.ord_id
+		AND B.prod_id= D.prod_id
+		AND B.ship_id=E.ship_id;
 
 
 --///////////////////////
