@@ -1,48 +1,668 @@
+ï»¿
+-------WÄ°NDOW FUNCTÄ°ON---ANALYTÄ°C AGGREGATE FUNC.-----------------
+-- group by tek atÄ±r halinde getirir, dÄ±stÄ±nct kullanÄ±lmaz, tablo oluÅŸturur,slowly,invalid,dependent
+-- agg yapÄ±lÄ±r fakat satÄ±r sayÄ±sÄ± teke dÃ¼ÅŸmez window function--dÄ±stÄ±nct kullanÄ±labilir,faster,valid,independent
+
+--WINDOW FRAME; hangi satÄ±rlarÄ± kapsasÄ±n,
+-- UNBOUNDED PRECEDÄ°NG  tÃ¼m satÄ±rlarÄ±n Ã¶ncesine bak -- UNBOUNDED FOLLOWÄ°NG tÃ¼m satÄ±ralrÄ±n sonrasÄ±na bak
+--n PRECEDÄ°NG  biz rows u kullanacaz.between ile baÅŸlar
+--satÄ±rlarÄ±n bir Ã¶ncesine  ve bir sonrakine bakÄ±p  iÅŸlem yapar.
+Veri setinde mevcut satÄ±rla bir ÅŸekilde iliÅŸkili olan bir dizi satÄ±rda bir iÅŸlem gerÃ§ekleÅŸtirmemizi
+saÄŸlar. Group by fonksiyonundan farklÄ± olarak diÄŸer satÄ±rlardaki verileri de hesaplamaya dahil 
+edebiliriz. Hareketli ortalama-kÃ¼mÃ¼latif toplam gibi iÅŸlemleri bu fonksiyonlarla grup bazÄ±nda 
+kolayca yapabiliriz.
+
+
+--QERY TÄ°ME--
+--Ã¼rÃ¼nlerin stock sayÄ±larÄ±nÄ± bulunuz
+SELECT	product_id, SUM(quantity)
+FROM	production.stocks
+GROUP BY product_id
+
+SELECT	product_id
+FROM	production.stocks
+GROUP BY product_id
+ORDER BY 1
+----------------
+-- Markalara gÃ¶re ortalama bisiklet fiyatlarÄ±nÄ± hem Group By hem de window Functions ile 
+--hesaplayÄ±nÄ±z.
+SELECT  distinct brand_id,AVG(list_price) OVER(PARTITION BY brand_id) avg_price
+FROM production.products
+
+SELECT  brand_id,AVG(list_price) avg_price
+FROM production.products
+GROUP by Brand_id
+----------------------------------------------------
+-- TÃ¼m bisikletler arasÄ±nda en ucuz bisikletin fiyatÄ±
+
+SELECT distinct MIN(list_price) OVER() min_price
+FROM production.products
+
+SELECT TOP 1 product_name, MIN(list_price) OVER()
+FROM production.products
+-------------------------------------------------------
+--2. Herbir kategorideki en ucuz bisikletin fiyatÄ±
+SELECT distinct category_id, MIN(list_price) OVER(PARTITION BY category_id) min_price
+FROM production.products
+------------------------------------------------------
+--product tablosunda toplam kaÃ§ farklÄ± bisiklet bulunduÄŸu
+
+SELECT distinct  COUNT(product_id) OVER() num_of_bike
+FROM production.products
+----------------------------------------------------
+--Order_items tablosunda toplam kaÃ§ farklÄ± bisiklet olduÄŸu
+
+SELECT  COUNT(distinct product_id)
+FROM sales.order_items
+---
+SELECT DISTINCT COUNT(product_id) OVER() order_num_of_bike
+FROM (
+		SELECT DISTINCT product_id
+		FROM sales.order_items
+	) A
+	--------------------------------------------
+----herbir aktegoride toplam kaÃ§ farklÄ± Ã¼rÃ¼n bulunduÄŸu
+
+SELECT distinct category_id, COUNT(product_id) OVER(PARTITION BY category_id)
+FROM production.products
+-------------------------------------------------
+-- Herbir kategorideki herbir  markada kaÃ§ farklÄ± bisikletin bulunduÄŸu
+SELECT distinct category_id,brand_id, COUNT(product_id) OVER(PARTITION BY category_id,brand_id)
+FROM production.products
+-------------------------
+SELECT distinct category_id,brand_id, COUNT(product_id) OVER(PARTITION BY category_id,brand_id)
+FROM production.products
+------------------------------------
+--Can we calculate how many different brands are in each category in this query with WF?
+
+
+SELECT DISTINCT category_id, count (brand_id) over (partition by category_id)
+FROM
+(
+SELECT	DISTINCT category_id, brand_id
+FROM	production.products
+) A
+-----------------------------------------------------------------------------------------
+---- 2. ANALYTIC NAVIGATION FUNCTIONS
+
+--first_value() - last_value() - lead() - lag()
+
+--Order tablosuna aÅŸaÄŸÄ±daki gibi yeni bir sÃ¼tun ekleyiniz:
+
+--1. Herbir personelin bir Ã¶nceki satÄ±ÅŸÄ±nÄ±n sipariÅŸ tarihini yazdÄ±rÄ±nÄ±z (LAG fonksiyonunu kullanÄ±nÄ±z)
+
+select *,LAG(order_date,1) OVER (PARTITION BY staff_id ORDER BY order_date,order_id) prev_order_date
+from sales.orders
+--staff id leri partitionla grupladÄ± aldÄ± order id ye gÃ¶re grupladÄ± LAG bir Ã¶ncekini aldÄ±.
+------------------------------------------------------------
+--Order tablosuna aÅŸaÄŸÄ±daki gibi yeni bir sÃ¼tun ekleyiniz:
+--2. Herbir personelin bir sonraki satÄ±ÅŸÄ±nÄ±n sipariÅŸ tarihini yazdÄ±rÄ±nÄ±z (LEAD fonksiyonunu kullanÄ±nÄ±z)
+SELECT	*,
+		LEAD(order_date, 1) OVER (PARTITION BY staff_id ORDER BY Order_date, order_id) next_ord_date
+FROM	sales.orders
+-- LEAD, current row'dan belirtilen argÃ¼mandaki rakam kadar sonraki deÄŸeri getiriyor
+-- Niye iki sÃ¼tunu order by yaptÄ±k? Ã§Ã¼nkÃ¼ ayÄ±n aynÄ± gÃ¼nÃ¼nde birden fazla sipariÅŸ verilmiÅŸ olabilir.
+	-- o yÃ¼zden tarihe ilave olarak bir de order_id ye gÃ¶re sÄ±ralama yaptÄ±rdÄ±k
+--GENELLÄ°KLE LEAD VE LAG FONKSÄ°YONLARI SIRALANMIÅ BÄ°R LÄ°STEYE UYGULANIR!!! O YÃœZDEN ORDER BY KULLANILMALIDIR!!
+
+--burda da staff_id :2 olanlarÄ±n son satÄ±rÄ±nÄ±n NULL olduÄŸuna dikkat ! (orada ilk pencere bitiyor)
+
+
+-----------WÄ°NDOW FRAME------------------
+
+SELECT category_id,product_id,
+	COUNT(*) OVER() TOTAL
+FROM production.products
+
+SELECT DISTINCT category_id,product_id
+	COUNT(*) OVER() TOTAL_ROW,
+	COUNT(*) OVER(PARTITION BY category_id ORDER BY prdoduct_id) num_of_rows
+FROM production.products
+
+--- bu da biraz farklÄ±
+
+SELECT DISTINCT category_id, product_id,
+	   COUNT(*) OVER() AS total_row,      ---satÄ±rlarÄ± say
+	   COUNT(*) OVER(PARTITION BY category_id) AS num_of_row,--cumulatif toplam
+	   COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id) AS num_of_row  --cumulatif toplam
+FROM production.products
+
+---
+SELECT category_id,
+	   COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS prev_with_curve
+FROM production.products
+-- Ã¶ncekiyle beraber getiriyor.
+
+SELECT	category_id,
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+----------
+SELECT	category_id,
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+------------
+SELECT	category_id,
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+
+--yukarÄ±da bir Ã¶nceki ve bir sonrakini hesaba katÄ±yo
+--------------------------------------------------------------------------------
+SELECT	category_id,                          -- kendiside var unutma
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN 2 PRECEDING AND 3 FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+
+-------------------------
+--FÄ°RST_VALUE---
+
+--1. TÃ¼m bisikletler arasÄ±nda en ucuz bisikletin adÄ± (FIRST_VALUE fonksiyonunu kullanÄ±nÄ±z)
+SELECT distinct FIRST_VALUE(product_name) OVER (order by list_price)
+FROM production.products
+--Ã¼rÃ¼nÃ¼n yanÄ±na list price' ini nasÄ±l eklersiniz?
+
+SELECT distinct FIRST_VALUE (product_name) OVER ( ORDER BY list_price),min(list_price) over()
+FROM production.products 
+
+-------------------------------------------------------
+--2. Herbir kategorideki en ucuz bisikletin adÄ± (FIRST_VALUE fonksiyonunu kullanÄ±nÄ±z)
+
+
+SELECT distinct category_id,FIRST_VALUE (product_name) OVER (partition by category_id  ORDER BY list_price)
+FROM production.products
+--------------------------------------------
+
+--1. TÃ¼m bisikletler arasÄ±nda en ucuz bisikletin adÄ± (LAST_VALUE fonksiyonunu kullanÄ±nÄ±z)
+SELECT distinct
+       FIRST_VALUE(product_name) OVER (order by list_price),
+	   LAST_VALUE(product_name) OVER (order by list_price desc)
+FROM production.products
+
+
+
+--1. TÃ¼m bisikletler arasÄ±nda en ucuz bisikletin adÄ± (LAST_VALUE fonksiyonunu kullanÄ±nÄ±z)
+SELECT	DISTINCT
+		FIRST_VALUE(product_name) OVER ( ORDER BY list_price),
+		LAST_VALUE(product_name) OVER (	ORDER BY list_price ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+FROM	production.products
+
+---------------------------------------------------------------------
+
+--1. Herbir kategori iÃ§inde bisikletlerin fiyat sÄ±ralamasÄ±nÄ± yapÄ±nÄ±z (artan fiyata gÃ¶re 1'den baÅŸlayÄ±p birer birer artacak)
+
+SELECT category_id, list_price,
+	   ROW_NUMBER () OVER(PARTITION BY category_id ORDER BY list_price) AS ROW_NUM
+FROM production.products
+
+
+--2. AynÄ± soruyu aynÄ± fiyatlÄ± bisikletler aynÄ± sÄ±ra numarasÄ±nÄ± alacak ÅŸekilde yapÄ±nÄ±z (RANK fonksiyonunu kullanÄ±nÄ±z)
+SELECT category_id, list_price,
+ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM
+FROM production.products
+
+--built-in function RANKO RETURNS bigint (edited) 
+
+
+SELECT	category_id, list_price,
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM,
+		DENSE_RANK () OVER (PARTITION BY category_id ORDER BY list_price) DENSE_RANK_NUM
+FROM	production.products
+---------------------------------------------
+
+SELECT	category_id, list_price,
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM,
+		DENSE_RANK () OVER (PARTITION BY category_id ORDER BY list_price) DENSE_RANK_NUM,
+		CUME_DIST () OVER (PARTITION BY category_id ORDER BY list_price) CUME_DIST
+FROM	production.products
+
+
+--4. Herbir kategori iÃ§inde bisikletierin fiyatlarÄ±na gÃ¶re bulunduklarÄ± yÃ¼zdelik dilimleri yazdÄ±rÄ±nÄ±z. (CUME_DIST fonksiyonunu kullanÄ±nÄ±z)
+
+SELECT	category_id, list_price,
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM,
+		DENSE_RANK () OVER (PARTITION BY category_id ORDER BY list_price) DENSE_RANK_NUM,
+		round(CUME_DIST () OVER (PARTITION BY category_id ORDER BY list_price),2) CUME_DIST
+FROM	production.products
+
+--5. Herbir kategori iÃ§inde bisikletierin fiyatlarÄ±na gÃ¶re bulunduklarÄ± yÃ¼zdelik dilimleri yazdÄ±rÄ±nÄ±z. (PERCENT_RANK fonksiyonunu kullanÄ±nÄ±z)
+
+SELECT	category_id, list_price,
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM,
+		DENSE_RANK () OVER (PARTITION BY category_id ORDER BY list_price) DENSE_RANK_NUM,
+		ROUND (CUME_DIST () OVER (PARTITION BY category_id ORDER BY list_price) , 2 ) CUM_DIST,
+		ROUND (PERCENT_RANK () OVER (PARTITION BY category_id ORDER BY list_price) , 2 ) PERCENT_RNK
+FROM	production.products
+-- cume dist en yuksek deÄŸere 1 verir,  percent_rank 0 dan baÅŸlar
+-------------------------------------------------------------------------
+ -6. Herbir kategorideki bisikletleri artan fiyata gÃ¶re 4 gruba ayÄ±rÄ±n. MÃ¼mkÃ¼nse her grupta aynÄ± sayÄ±da bisiklet olacak.
+--(NTILE fonksiyonunu kullanÄ±nÄ±z)
+SELECT	category_id, list_price,
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM,
+		DENSE_RANK () OVER (PARTITION BY category_id ORDER BY list_price) DENSE_RANK_NUM,
+		ROUND (CUME_DIST () OVER (PARTITION BY category_id ORDER BY list_price) , 2 ) CUM_DIST,
+		ROUND (PERCENT_RANK () OVER (PARTITION BY category_id ORDER BY list_price) , 2 ) PERCENT_RNK,
+		NTILE(4) OVER (PARTITION BY category_id ORDER BY list_price) ntil
+FROM	production.products
+
+
+
+
+------------------------------------------------------------------
+----------------------------------------------------------------
+-----------------------------------------------------------------
+
+
+----------- 2021-08-05 DAwSQL Session 7 Window Functions------------
+
+
+
+--Ã¼rÃ¼nlerin stock sayÃ½larÃ½nÃ½ bulunuz
+
+
+SELECT	product_id, SUM(quantity)
+FROM	production.stocks
+GROUP BY product_id
+
+
+SELECT	product_id
+FROM	production.stocks
+GROUP BY product_id
+ORDER BY 1
+
+
+
+SELECT	*, SUM(quantity) OVER (PARTITION BY product_id) 
+FROM	production.stocks
+
+
+SELECT	DISTINCT product_id, SUM(quantity) OVER (PARTITION BY product_id) 
+FROM	production.stocks
+
+
+
+-- Markalara gÃ¶re ortalama bisiklet fiyatlarÃ½nÃ½ hem Group By hem de Window Functions ile hesaplayÃ½nÃ½z.
+
+
+SELECT	brand_id, AVG(list_price) avg_price
+FROM	production.products
+GROUP BY brand_id
+
+
+
+SELECT	DISTINCT brand_id, AVG(list_price) OVER (PARTITION BY brand_id) avg_price
+FROM	production.products
+
+
+
+-- 1. ANALYTIC AGGREGATE FUNCTIONS --
+
+
+--MIN() - MAX() - AVG() - SUM() - COUNT()
+
+
+--1. TÃ¼m bisikletler arasÃ½nda en ucuz bisikletin fiyatÃ½
+
+
+SELECT	DISTINCT MIN (list_price) OVER ()
+FROM	production.products
+
+
+--2. Herbir kategorideki en ucuz bisikletin fiyatÃ½
+
+
+SELECT	DISTINCT category_id, MIN (list_price) OVER (PARTITION BY category_id)
+FROM	production.products
+
+
+
+--3. Products tablosunda toplam kaÃ§ faklÃ½ bisikletin bulunduÃ°u
+
+
+SELECT	DISTINCT COUNT (product_id) OVER () NUM_OF_BIKE
+FROM	production.products
+
+
+--Order_items tablosunda toplam kaÃ§ farklÃ½ bisiklet olduÃ°u
+
+
+SELECT DISTINCT COUNT(product_id) OVER() order_num_of_bike
+FROM sales.order_items
+
+
+
+SELECT DISTINCT COUNT(product_id) OVER() order_num_of_bike
+FROM (
+		SELECT DISTINCT product_id
+		FROM sales.order_items
+	) A
+
+
+
+SELECT COUNT (DISTINCT product_id)
+FROM sales.order_items
+
+
+
+--4. Herbir kategoride toplam kaÃ§ farklÃ½ bisikletin bulunduÃ°u
+
+
+SELECT	DISTINCT category_id, COUNT (product_id) OVER (PARTITION BY category_id)
+FROM	production.products 
+
+
+--5. Herbir kategorideki herbir markada kaÃ§ farklÃ½ bisikletin bulunduÃ°u
+
+
+
+SELECT	DISTINCT category_id, brand_id, COUNT (product_id) OVER (PARTITION BY category_id, brand_id)
+FROM	production.products 
+
+
+
+
+--Soru: WF ile tek select' te herbir kategoride kaÃ§ farklÃ½ marka olduÃ°unu hesaplayabilir miyiz?
+
+
+
+select distinct category_id, COUNT(brand_id) over(partition by category_id) num_of_brand
+from (
+
+select distinct category_id, brand_id
+from	production.products
+
+) A
+
+
+---- 2. ANALYTIC NAVIGATION FUNCTIONS --
+
+
+--first_value() - last_value() - lead() - lag()
+
+
+--Order tablosuna aÃ¾aÃ°Ã½daki gibi yeni bir sÃ¼tun ekleyiniz:
+--1. Herbir personelin bir Ã¶nceki satÃ½Ã¾Ã½nÃ½n sipariÃ¾ tarihini yazdÃ½rÃ½nÃ½z (LAG fonksiyonunu kullanÃ½nÃ½z)
+
+
+
+SELECT	*, 
+		LAG(order_date, 1) OVER (PARTITION BY staff_id ORDER BY Order_date, order_id) prev_ord_date
+FROM	sales.orders
+
+
+
+--Order tablosuna aÃ¾aÃ°Ã½daki gibi yeni bir sÃ¼tun ekleyiniz:
+--2. Herbir personelin bir sonraki satÃ½Ã¾Ã½nÃ½n sipariÃ¾ tarihini yazdÃ½rÃ½nÃ½z (LEAD fonksiyonunu kullanÃ½nÃ½z)
+
+
+SELECT	*, 
+		LEAD(order_date, 1) OVER (PARTITION BY staff_id ORDER BY Order_date, order_id) next_ord_date
+FROM	sales.orders
+
+
+
+SELECT	*, 
+		LEAD(order_date, 2) OVER (PARTITION BY staff_id ORDER BY Order_date, order_id) next_ord_date
+FROM	sales.orders
+
+
+
+-- Window Frame --
+
+
+
+SELECT 
+		COUNT (*) OVER () TOTAL_ROW
+from	production.products
+
+
+---
+
+
+SELECT  DISTINCT category_id,  
+		COUNT (*) OVER () TOTAL_ROW,
+		COUNT (*) OVER (PARTITION BY category_id) num_of_row,
+		COUNT (*) OVER (PARTITION BY category_id ORDER BY product_id) num_of_row
+from	production.products
+
+
+---
+
+
+SELECT	category_id,
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) prev_with_current
+from	production.products
+
+
+---
+
+SELECT	category_id,
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+
+
+
+
+
+SELECT	category_id,
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+
+
+
+--
+
+
+SELECT	category_id,
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+
+
+--
+
+
+SELECT	category_id,
+		COUNT(*) OVER(PARTITION BY category_id ORDER BY product_id ROWS BETWEEN 2 PRECEDING AND 3 FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+
+
+
+--
+
+SELECT	category_id,
+		COUNT(*) OVER( ORDER BY product_id ROWS BETWEEN 2 PRECEDING AND 3 FOLLOWING) current_with_following
+from	production.products
+ORDER BY	category_id, product_id
+
+
+
+---
+
+
+--1. TÃ¼m bisikletler arasÃ½nda en ucuz bisikletin adÃ½ (FIRST_VALUE fonksiyonunu kullanÃ½nÃ½z)
+
+
+SELECT	FIRST_VALUE(product_name) OVER ( ORDER BY list_price)
+FROM	production.products
+
+
+--Ã¼rÃ¼nÃ¼n yanÃ½na list price' Ã½nÃ½ nasÃ½l eklersiniz?
+
+SELECT	 DISTINCT FIRST_VALUE(product_name) OVER ( ORDER BY list_price) , min (list_price) over ()
+FROM	production.products
+
+
+
+
+--2. Herbir kategorideki en ucuz bisikletin adÃ½ (FIRST_VALUE fonksiyonunu kullanÃ½nÃ½z)
+
+
+
+select distinct category_id, FIRST_VALUE(product_name) over (partition by category_id order by list_price)
+from production.products
+
+
+
+--1. TÃ¼m bisikletler arasÃ½nda en ucuz bisikletin adÃ½ (LAST_VALUE fonksiyonunu kullanÃ½nÃ½z)
+
+
+SELECT	DISTINCT 
+		FIRST_VALUE(product_name) OVER ( ORDER BY list_price),
+		LAST_VALUE(product_name) OVER (	ORDER BY list_price desc ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+FROM	production.products
+
+
+
+
+
+-- 3. ANALYTIC NUMBERING FUNCTIONS --
+
+
+--ROW_NUMBER() - RANK() - DENSE_RANK() - CUME_DIST() - PERCENT_RANK() - NTILE()
+
+
+
+--1. Herbir kategori iÃ§inde bisikletlerin fiyat sÃ½ralamasÃ½nÃ½ yapÃ½nÃ½z (artan fiyata gÃ¶re 1'den baÃ¾layÃ½p birer birer artacak)
+
+
+SELECT	category_id, list_price, 
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM
+FROM	production.products
+
+
+
+--2. AynÃ½ soruyu aynÃ½ fiyatlÃ½ bisikletler aynÃ½ sÃ½ra numarasÃ½nÃ½ alacak Ã¾ekilde yapÃ½nÃ½z (RANK fonksiyonunu kullanÃ½nÃ½z)
+
+
+SELECT	category_id, list_price, 
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM
+FROM	production.products
+
+
+--3. AynÃ½ soruyu aynÃ½ fiyatlÃ½ bisikletler aynÃ½ sÃ½ra numarasÃ½nÃ½ alacak Ã¾ekilde yapÃ½nÃ½z (DENSE_RANK fonksiyonunu kullanÃ½nÃ½z)
+
+SELECT	category_id, list_price, 
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM,
+		DENSE_RANK () OVER (PARTITION BY category_id ORDER BY list_price) DENSE_RANK_NUM
+FROM	production.products
+
+
+
+--4. Herbir kategori iÃ§inde bisikletierin fiyatlarÃ½na gÃ¶re bulunduklarÃ½ yÃ¼zdelik dilimleri yazdÃ½rÃ½nÃ½z. (CUME_DIST fonksiyonunu kullanÃ½nÃ½z)
+
+--5. Herbir kategori iÃ§inde bisikletierin fiyatlarÃ½na gÃ¶re bulunduklarÃ½ yÃ¼zdelik dilimleri yazdÃ½rÃ½nÃ½z. (PERCENT_RANK fonksiyonunu kullanÃ½nÃ½z)
+
+SELECT	category_id, list_price, 
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM,
+		DENSE_RANK () OVER (PARTITION BY category_id ORDER BY list_price) DENSE_RANK_NUM,
+		ROUND (CUME_DIST () OVER (PARTITION BY category_id ORDER BY list_price) , 2 ) CUM_DIST,
+		ROUND (PERCENT_RANK () OVER (PARTITION BY category_id ORDER BY list_price) , 2 ) PERCENT_RNK
+FROM	production.products
+
+
+--6. Herbir kategorideki bisikletleri artan fiyata gÃ¶re 4 gruba ayÃ½rÃ½n. MÃ¼mkÃ¼nse her grupta aynÃ½ sayÃ½da bisiklet olacak. 
+--(NTILE fonksiyonunu kullanÃ½nÃ½z)
+
+
+SELECT	category_id, list_price, 
+		ROW_NUMBER () OVER (PARTITION BY category_id ORDER BY list_price) ROW_NUM,
+		RANK () OVER (PARTITION BY category_id ORDER BY list_price) RANK_NUM,
+		DENSE_RANK () OVER (PARTITION BY category_id ORDER BY list_price) DENSE_RANK_NUM,
+		ROUND (CUME_DIST () OVER (PARTITION BY category_id ORDER BY list_price) , 2 ) CUM_DIST,
+		ROUND (PERCENT_RANK () OVER (PARTITION BY category_id ORDER BY list_price) , 2 ) PERCENT_RNK,
+		NTILE(4) OVER (PARTITION BY category_id ORDER BY list_price) ntil
+FROM	production.products
+
+
+---
+
+--maÃ°azalarÃ½n 2016 yÃ½lÃ½na ait haftalÃ½k hareketli sipariÃ¾ sayÃ½larÃ½nÃ½ hesaplayÃ½nÃ½z
+
+
+
+
+
+
+--'2016-03-12' ve '2016-04-12' arasÃ½nda satÃ½lan Ã¼rÃ¼n sayÃ½sÃ½nÃ½n 7 gÃ¼nlÃ¼k hareketli ortalamasÃ½nÃ½ hesaplayÃ½n.
+
+
+------------------------------------------------------------------
+--------------------------------------------------------------------
+------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+SELECT order_id, order_date, customer_name, city, order_amount
+,SUM(order_amount) OVER(PARTITION BY ....ORDER BY .... WINDOW FRAME) as grand_total 
+-- topla ÅŸehirlere gÃ¶re grupla
+FROM [dbo].[Orde]
+
 select *
 from orde
-------SUM İLE
+------SUM Ä°LE
 TOPLA()
 
-SUM() toplama işlevini hepimiz biliyoruz. Belirtilen grup (şehir, eyalet, 
-ülke vb. gibi) veya grup belirtilmemişse tüm tablo için belirtilen alanın
-toplamını yapar. Normal SUM() toplama işlevinin ve pencere SUM() toplama 
-işlevinin çıktısının ne olacağını göreceğiz.
+SUM() toplama iÅŸlevini hepimiz biliyoruz. Belirtilen grup (ÅŸehir, eyalet, 
+Ã¼lke vb. gibi) veya grup belirtilmemiÅŸse tÃ¼m tablo iÃ§in belirtilen alanÄ±n
+toplamÄ±nÄ± yapar. Normal SUM() toplama iÅŸlevinin ve pencere SUM() toplama 
+iÅŸlevinin Ã§Ä±ktÄ±sÄ±nÄ±n ne olacaÄŸÄ±nÄ± gÃ¶receÄŸiz.
 
-Aşağıdaki, normal bir SUM() toplama işlevi örneğidir. Her şehir için sipariş
-tutarını toplar.
+AÅŸaÄŸÄ±daki, normal bir SUM() toplama iÅŸlevi Ã¶rneÄŸidir. Her ÅŸehir iÃ§in sipariÅŸ
+tutarÄ±nÄ± toplar.
 
-Sonuç kümesinden, normal bir toplama işlevinin birden çok satırı tek bir 
-çıktı satırında gruplandırdığını ve bu da tek tek satırların kimliklerini 
-kaybetmesine neden olduğunu görebilirsiniz.
+SonuÃ§ kÃ¼mesinden, normal bir toplama iÅŸlevinin birden Ã§ok satÄ±rÄ± tek bir 
+Ã§Ä±ktÄ± satÄ±rÄ±nda gruplandÄ±rdÄ±ÄŸÄ±nÄ± ve bu da tek tek satÄ±rlarÄ±n kimliklerini 
+kaybetmesine neden olduÄŸunu gÃ¶rebilirsiniz.
 
 SELECT city, sum(order_amount) as total_prd_amount
 from orde
 group by city
 
--------WİNDOW İLE
-Bu, pencere toplama işlevlerinde gerçekleşmez. Satırlar kimliklerini korur 
-ve ayrıca her satır için toplu bir değer gösterir. Aşağıdaki örnekte sorgu 
-aynı şeyi yapıyor, yani her şehir için verileri topluyor ve her biri için 
-toplam sipariş tutarının toplamını gösteriyor. Ancak, sorgu artık toplam 
-sipariş miktarı için başka bir sütun ekler, böylece her satır kendi kimliğini
-korur. Grand_total olarak işaretlenen sütun, aşağıdaki örnekteki yeni 
-sütundur.
+-------WÄ°NDOW Ä°LE
+Bu, pencere toplama iÅŸlevlerinde gerÃ§ekleÅŸmez. SatÄ±rlar kimliklerini korur 
+ve ayrÄ±ca her satÄ±r iÃ§in toplu bir deÄŸer gÃ¶sterir. AÅŸaÄŸÄ±daki Ã¶rnekte sorgu 
+aynÄ± ÅŸeyi yapÄ±yor, yani her ÅŸehir iÃ§in verileri topluyor ve her biri iÃ§in 
+toplam sipariÅŸ tutarÄ±nÄ±n toplamÄ±nÄ± gÃ¶steriyor. Ancak, sorgu artÄ±k toplam 
+sipariÅŸ miktarÄ± iÃ§in baÅŸka bir sÃ¼tun ekler, bÃ¶ylece her satÄ±r kendi kimliÄŸini
+korur. Grand_total olarak iÅŸaretlenen sÃ¼tun, aÅŸaÄŸÄ±daki Ã¶rnekteki yeni 
+sÃ¼tundur.
 
 SELECT order_id, order_date, customer_name, city, order_amount
-,SUM(order_amount) 
-OVER(PARTITION BY city) as grand_total -- topla şehirlere göre grupla
+,SUM(order_amount) OVER(PARTITION BY city) as grand_total -- topla ÅŸehirlere gÃ¶re grupla
 FROM [dbo].[Orde]
 
 ---AVG----
 
-AVG veya Ortalama, bir Pencere işleviyle tam olarak aynı şekilde çalışır.
-Aşağıdaki sorgu size her bir şehir ve her ay için ortalama sipariş miktarını 
+AVG veya Ortalama, bir Pencere iÅŸleviyle tam olarak aynÄ± ÅŸekilde Ã§alÄ±ÅŸÄ±r.
+AÅŸaÄŸÄ±daki sorgu size her bir ÅŸehir ve her ay iÃ§in ortalama sipariÅŸ miktarÄ±nÄ± 
 verecektir 
-(her ne kadar basit olması için verileri yalnızca bir ayda kullandık).
-Bölüm listesinde birden fazla alan belirterek birden fazla ortalama 
+(her ne kadar basit olmasÄ± iÃ§in verileri yalnÄ±zca bir ayda kullandÄ±k).
+BÃ¶lÃ¼m listesinde birden fazla alan belirterek birden fazla ortalama 
 belirtiyoruz.
-Ayrıca aşağıdaki sorguda gösterildiği gibi MONTH(order_date) gibi listelerdeki
-ifadeleri de kullanabileceğinizi belirtmekte fayda var. 
+AyrÄ±ca aÅŸaÄŸÄ±daki sorguda gÃ¶sterildiÄŸi gibi MONTH(order_date) gibi listelerdeki
+ifadeleri de kullanabileceÄŸinizi belirtmekte fayda var. 
  
 SELECT order_id, order_date, customer_name, city, order_amount
  ,AVG(order_amount) OVER(PARTITION BY city, MONTH(order_date)) as   average_order_amount 
@@ -50,16 +670,16 @@ FROM [dbo].[Orde]
 
 
 ---MIN()---------------
-MIN toplama işlevi, belirtilen bir grup veya grup belirtilmemişse tüm tablo için minimum 
-değeri bulur.
-Örneğin, aşağıdaki sorguyu kullanacağımız her şehir için en küçük siparişi (minimum sipariş)
-arıyoruz.
+MIN toplama iÅŸlevi, belirtilen bir grup veya grup belirtilmemiÅŸse tÃ¼m tablo iÃ§in minimum 
+deÄŸeri bulur.
+Ã–rneÄŸin, aÅŸaÄŸÄ±daki sorguyu kullanacaÄŸÄ±mÄ±z her ÅŸehir iÃ§in en kÃ¼Ã§Ã¼k sipariÅŸi (minimum sipariÅŸ)
+arÄ±yoruz.
 
 SELECT order_id, order_date, customer_name, city, order_amount
  ,MIN(order_amount) OVER(PARTITION BY city) as minimum_order_amount 
 FROM [dbo].[Orde]
 ------------------------------------
-MAX()her şehir için en büyük siparişi (maksimum sipariş miktarını) bulalım.
+MAX()her ÅŸehir iÃ§in en bÃ¼yÃ¼k sipariÅŸi (maksimum sipariÅŸ miktarÄ±nÄ±) bulalÄ±m.
 
 
 SELECT order_id, order_date, customer_name, city, order_amount
@@ -67,54 +687,54 @@ SELECT order_id, order_date, customer_name, city, order_amount
 FROM [dbo].[Orde] 
 -------------------------
 ---COUNT ()--------------
-COUNT() işlevi kayıtları/satırları sayar.
+COUNT() iÅŸlevi kayÄ±tlarÄ±/satÄ±rlarÄ± sayar.
 
-DISTINCT öğesinin COUNT() işleviyle desteklenmediğini, ancak normal COUNT() işlevi için 
-desteklendiğini unutmayın. DISTINCT, belirtilen bir alanın farklı değerlerini bulmanıza yardımcı 
+DISTINCT Ã¶ÄŸesinin COUNT() iÅŸleviyle desteklenmediÄŸini, ancak normal COUNT() iÅŸlevi iÃ§in 
+desteklendiÄŸini unutmayÄ±n. DISTINCT, belirtilen bir alanÄ±n farklÄ± deÄŸerlerini bulmanÄ±za yardÄ±mcÄ± 
 olur.
 
-Örneğin Nisan 2017 de kaç müşterinin sipariş verdiğini görmek istiyorsak, tüm müşterileri 
-doğrudan sayamayız. Aynı müşterinin aynı ayda birden fazla sipariş vermesi mümkündür.
+Ã–rneÄŸin Nisan 2017 de kaÃ§ mÃ¼ÅŸterinin sipariÅŸ verdiÄŸini gÃ¶rmek istiyorsak, tÃ¼m mÃ¼ÅŸterileri 
+doÄŸrudan sayamayÄ±z. AynÄ± mÃ¼ÅŸterinin aynÄ± ayda birden fazla sipariÅŸ vermesi mÃ¼mkÃ¼ndÃ¼r.
 
-COUNT(customer_name) kopyaları sayacağı için size yanlış bir sonuç verecektir. 
-Oysa COUNT(DISTINCT müşteri_adı) her benzersiz müşteriyi yalnızca bir kez saydığı için size 
-doğru sonucu verecektir.
+COUNT(customer_name) kopyalarÄ± sayacaÄŸÄ± iÃ§in size yanlÄ±ÅŸ bir sonuÃ§ verecektir. 
+Oysa COUNT(DISTINCT mÃ¼ÅŸteri_adÄ±) her benzersiz mÃ¼ÅŸteriyi yalnÄ±zca bir kez saydÄ±ÄŸÄ± iÃ§in size 
+doÄŸru sonucu verecektir.
 
-Normal COUNT() işlevi için geçerlidir:
+Normal COUNT() iÅŸlevi iÃ§in geÃ§erlidir:
 ---------
 SELECT city,COUNT(DISTINCT customer_name) number_of_customers
 FROM [dbo].[Orde] 
 GROUP BY city
 --------------
---yanlış----
+--yanlÄ±ÅŸ----
 SELECT order_id, order_date, customer_name, city, order_amount
  ,COUNT(DISTINCT customer_name) OVER(PARTITION BY city) as number_of_customers
 FROM [dbo].[Orde] 
-------doğru---------
+------doÄŸru---------
 SELECT order_id, order_date, customer_name, city, order_amount
  ,COUNT(order_id) OVER(PARTITION BY city) as total_orders
 FROM [dbo].[Orde]
  
  --------
-Sıralama Penceresi İşlevleri
-Pencere toplama işlevlerinin belirli bir alanın değerini toplaması gibi, RANKING işlevleri de 
-belirtilen bir alanın değerlerini sıralayacak ve sıralamalarına göre kategorilere ayıracaktır.
+SÄ±ralama Penceresi Ä°ÅŸlevleri
+Pencere toplama iÅŸlevlerinin belirli bir alanÄ±n deÄŸerini toplamasÄ± gibi, RANKING iÅŸlevleri de 
+belirtilen bir alanÄ±n deÄŸerlerini sÄ±ralayacak ve sÄ±ralamalarÄ±na gÃ¶re kategorilere ayÄ±racaktÄ±r.
 
-SIRALAMA işlevlerinin en yaygın kullanımı, belirli bir değere göre en üstteki (N) kayıtları 
-bulmaktır. Örneğin, En yüksek ücretli 10 çalışan, İlk 10 sıradaki öğrenci, En büyük 50 sipariş vb.
+SIRALAMA iÅŸlevlerinin en yaygÄ±n kullanÄ±mÄ±, belirli bir deÄŸere gÃ¶re en Ã¼stteki (N) kayÄ±tlarÄ± 
+bulmaktÄ±r. Ã–rneÄŸin, En yÃ¼ksek Ã¼cretli 10 Ã§alÄ±ÅŸan, Ä°lk 10 sÄ±radaki Ã¶ÄŸrenci, En bÃ¼yÃ¼k 50 sipariÅŸ vb.
 
-Aşağıdakiler desteklenen SIRALAMA işlevleridir:
+AÅŸaÄŸÄ±dakiler desteklenen "SIRALAMA" iÅŸlevleridir:
 
-RANK(), DENSE_RANK(), ROW_NUMBER(), NTILE()
+RANK(), DENSE_RANK(), ROW_NUMBER(), NTILE(),CUSE_DIST,PERCENT_RANK
 
 
-RANK() işlevi, örneğin maaş, sipariş tutarı vb. gibi belirli bir değere dayalı olarak her 
-kayda benzersiz bir sıralama vermek için kullanılır.
+RANK() iÅŸlevi, Ã¶rneÄŸin maaÅŸ, sipariÅŸ tutarÄ± vb. gibi belirli bir deÄŸere dayalÄ± olarak her 
+kayda benzersiz bir sÄ±ralama vermek iÃ§in kullanÄ±lÄ±r.
 
-İki kayıt aynı değere sahipse, RANK() işlevi bir sonraki sırayı atlayarak her iki kayda da 
-aynı sırayı atayacaktır. Bunun anlamı – eğer 2. seviyede iki özdeş değer varsa, her iki kayda 
-da aynı 2. dereceyi atayacak ve sonra 3. sırayı atlayacak ve 4. sırayı bir sonraki kayda 
-atayacaktır.
+Ä°ki kayÄ±t aynÄ± deÄŸere sahipse, RANK() iÅŸlevi bir sonraki sÄ±rayÄ± atlayarak her iki kayda da 
+aynÄ± sÄ±rayÄ± atayacaktÄ±r. Bunun anlamÄ± â€“ eÄŸer 2. seviyede iki Ã¶zdeÅŸ deÄŸer varsa, her iki kayda 
+da aynÄ± 2. dereceyi atayacak ve sonra 3. sÄ±rayÄ± atlayacak ve 4. sÄ±rayÄ± bir sonraki kayda 
+atayacaktÄ±r.
 
 1-2-3-3-5 oldu
 SELECT order_date,order_id,customer_name,city,
@@ -126,9 +746,9 @@ RANK() OVER(ORDER BY order_amount DESC) [Rank]
 FROM [dbo].[Orde]
  
  ----
-DENSE_RANK() işlevi, herhangi bir sıra atlamaması dışında RANK() işleviyle aynıdır. 
-Bunun anlamı, iki özdeş kayıt bulunursa, DENSE_RANK() her iki kayda aynı sırayı atayacaktır, 
-ancak atlamadan sonraki sırayı atlamayacaktır.
+DENSE_RANK() iÅŸlevi, herhangi bir sÄ±ra atlamamasÄ± dÄ±ÅŸÄ±nda RANK() iÅŸleviyle aynÄ±dÄ±r. 
+Bunun anlamÄ±, iki Ã¶zdeÅŸ kayÄ±t bulunursa, DENSE_RANK() her iki kayda aynÄ± sÄ±rayÄ± atayacaktÄ±r, 
+ancak atlamadan sonraki sÄ±rayÄ± atlamayacaktÄ±r.
 
 1-2-3-3-4 oldu
 SELECT order_id,order_date,customer_name,city, order_amount,
@@ -146,19 +766,19 @@ FROM [dbo].[Orde]
 SELECT order_id,order_date,customer_name,city, order_amount,
 ROW_NUMBER() OVER(PARTITION BY city ORDER BY order_amount DESC) [row_number]
 FROM [dbo].[Orde]
---Bölmeyi şehir üzerinde yaptığımızı unutmayın. Bu, her şehir için sıra numarasının sıfırlandığı 
---ve böylece tekrar 1 den yeniden başladığı anlamına gelir. Ancak, sıraların sırası sipariş miktarına
---göre belirlenir, böylece herhangi bir şehir için en büyük sipariş tutarı ilk satır olur ve böylece
---satır numarası 1 olarak atanır.
+--BÃ¶lmeyi ÅŸehir Ã¼zerinde yaptÄ±ÄŸÄ±mÄ±zÄ± unutmayÄ±n. Bu, her ÅŸehir iÃ§in sÄ±ra numarasÄ±nÄ±n sÄ±fÄ±rlandÄ±ÄŸÄ± 
+--ve bÃ¶ylece tekrar 1 den yeniden baÅŸladÄ±ÄŸÄ± anlamÄ±na gelir. Ancak, sÄ±ralarÄ±n sÄ±rasÄ± sipariÅŸ miktarÄ±na
+--gÃ¶re belirlenir, bÃ¶ylece herhangi bir ÅŸehir iÃ§in en bÃ¼yÃ¼k sipariÅŸ tutarÄ± ilk satÄ±r olur ve bÃ¶ylece
+--satÄ±r numarasÄ± 1 olarak atanÄ±r.
 ---------
-NTILE() çok yararlı bir pencere işlevidir. Belirli bir satırın hangi yüzdelik dilime 
-(veya çeyreğe veya başka bir alt bölüme) düştüğünü belirlemenize yardımcı olur.
+NTILE() Ã§ok yararlÄ± bir pencere iÅŸlevidir. Belirli bir satÄ±rÄ±n hangi yÃ¼zdelik dilime 
+(veya Ã§eyreÄŸe veya baÅŸka bir alt bÃ¶lÃ¼me) dÃ¼ÅŸtÃ¼ÄŸÃ¼nÃ¼ belirlemenize yardÄ±mcÄ± olur.
 
-Bu, 100 satırınız varsa ve belirli bir değer alanına göre 4 çeyrek oluşturmak istiyorsanız, 
-bunu kolayca yapabilir ve her bir çeyreğe kaç satır düştüğünü görebilirsiniz.
+Bu, 100 satÄ±rÄ±nÄ±z varsa ve belirli bir deÄŸer alanÄ±na gÃ¶re 4 Ã§eyrek oluÅŸturmak istiyorsanÄ±z, 
+bunu kolayca yapabilir ve her bir Ã§eyreÄŸe kaÃ§ satÄ±r dÃ¼ÅŸtÃ¼ÄŸÃ¼nÃ¼ gÃ¶rebilirsiniz.
 
-Bir örnek görelim. Aşağıdaki sorguda sipariş miktarına göre dört çeyrek oluşturmak istediğimizi 
-belirtmiştik. Ardından, her bir çeyreğe kaç siparişin düştüğünü görmek isteriz.
+Bir Ã¶rnek gÃ¶relim. AÅŸaÄŸÄ±daki sorguda sipariÅŸ miktarÄ±na gÃ¶re dÃ¶rt Ã§eyrek oluÅŸturmak istediÄŸimizi 
+belirtmiÅŸtik. ArdÄ±ndan, her bir Ã§eyreÄŸe kaÃ§ sipariÅŸin dÃ¼ÅŸtÃ¼ÄŸÃ¼nÃ¼ gÃ¶rmek isteriz.
  
 SELECT order_id,order_date,customer_name,city, order_amount,
 NTILE(4) OVER(ORDER BY order_amount) [row_number]
@@ -170,25 +790,25 @@ The functions that can be used are LAG(), LEAD(), FIRST_VALUE(), LAST_VALUE()
 LAG() and LEAD()
 
 
-Bu aşağıdaki bir giriş makalesi olduğundan, bunların nasıl kullanılacağını göstermek için 
-çok basit bir örneğe bakıyoruz.
+Bu aÅŸaÄŸÄ±daki bir giriÅŸ makalesi olduÄŸundan, bunlarÄ±n nasÄ±l kullanÄ±lacaÄŸÄ±nÄ± gÃ¶stermek iÃ§in 
+Ã§ok basit bir Ã¶rneÄŸe bakÄ±yoruz.
 
-LAG işlevi, herhangi bir SQL birleşimi kullanmadan aynı sonuç kümesindeki önceki satırdaki 
-verilere erişmeyi sağlar. Aşağıdaki örnekte, önceki sipariş tarihini bulduğumuz LAG fonksiyonunu
-kullanarak görebilirsiniz.
+LAG iÅŸlevi, herhangi bir SQL birleÅŸimi kullanmadan aynÄ± sonuÃ§ kÃ¼mesindeki Ã¶nceki satÄ±rdaki 
+verilere eriÅŸmeyi saÄŸlar. AÅŸaÄŸÄ±daki Ã¶rnekte, Ã¶nceki sipariÅŸ tarihini bulduÄŸumuz LAG fonksiyonunu
+kullanarak gÃ¶rebilirsiniz.
 
-LAG() işlevini kullanarak önceki sipariş tarihini bulmak için komut dosyası:
+LAG() iÅŸlevini kullanarak Ã¶nceki sipariÅŸ tarihini bulmak iÃ§in komut dosyasÄ±:
  
 SELECT order_id,customer_name,city, order_amount,order_date,
  --in below line, 1 indicates check for previous row of the current row
  LAG(order_date,3) OVER(ORDER BY order_date) prev_order_date
 FROM [dbo].[Orde]
 -----
-LEAD işlevi, herhangi bir SQL birleştirmesi kullanmadan aynı sonuç kümesindeki bir sonraki 
-satırdaki verilere erişmeyi sağlar. Aşağıdaki örnekte görebilirsiniz, leadfonksiyonunu 
-kullanarak sonraki sipariş tarihini bulduk.
+LEAD iÅŸlevi, herhangi bir SQL birleÅŸtirmesi kullanmadan aynÄ± sonuÃ§ kÃ¼mesindeki bir sonraki 
+satÄ±rdaki verilere eriÅŸmeyi saÄŸlar. AÅŸaÄŸÄ±daki Ã¶rnekte gÃ¶rebilirsiniz, leadfonksiyonunu 
+kullanarak sonraki sipariÅŸ tarihini bulduk.
 
-LEAD() işlevini kullanarak bir sonraki sipariş tarihini bulmak için komut dosyası:
+LEAD() iÅŸlevini kullanarak bir sonraki sipariÅŸ tarihini bulmak iÃ§in komut dosyasÄ±:
 
 SELECT order_id,customer_name,city, order_amount,order_date,
  --in below line, 1 indicates check for next row of the current row
@@ -197,11 +817,11 @@ FROM [dbo].[Orde]
 
 --FIRST_VALUE() ve LAST_VALUE()
 
-Bu işlevler, PARTITION BY belirtilmemişse, bir bölüm veya tüm tablo içindeki ilk ve son kaydı 
-belirlemenize yardımcı olur .
+Bu iÅŸlevler, PARTITION BY belirtilmemiÅŸse, bir bÃ¶lÃ¼m veya tÃ¼m tablo iÃ§indeki ilk ve son kaydÄ± 
+belirlemenize yardÄ±mcÄ± olur .
 
-Mevcut veri kümemizden her şehrin ilk ve son sırasını bulalım. Not ORDER BY yan tümcesi FIRST_VALUE
-() ve LAST_VALUE() işlevleri için zorunludur
+Mevcut veri kÃ¼memizden her ÅŸehrin ilk ve son sÄ±rasÄ±nÄ± bulalÄ±m. Not ORDER BY yan tÃ¼mcesi FIRST_VALUE
+() ve LAST_VALUE() iÅŸlevleri iÃ§in zorunludur
 
  
 SELECT order_id,order_date,customer_name,city, order_amount,
