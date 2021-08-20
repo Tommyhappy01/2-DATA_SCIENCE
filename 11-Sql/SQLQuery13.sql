@@ -1,0 +1,4 @@
+USE Manufacturer
+
+SELECT*
+FROM 
