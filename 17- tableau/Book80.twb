@@ -1,0 +1,393 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 20212.21.0712.0907                               -->
+<workbook original-version='18.1' source-build='2021.2.1 (20212.21.0712.0907)' source-platform='win' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <_.fcp.AnimationOnByDefault.true...AnimationOnByDefault />
+    <_.fcp.MarkAnimation.true...MarkAnimation />
+    <_.fcp.ObjectModelEncapsulateLegacy.true...ObjectModelEncapsulateLegacy />
+    <_.fcp.ObjectModelTableType.true...ObjectModelTableType />
+    <_.fcp.SchemaViewerObjectModel.true...SchemaViewerObjectModel />
+    <SheetIdentifierTracking />
+    <WindowsPersistSimpleIdentifiers />
+  </document-format-change-manifest>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <_.fcp.AnimationOnByDefault.false...style>
+    <_.fcp.AnimationOnByDefault.false..._.fcp.MarkAnimation.true...style-rule element='animation'>
+      <_.fcp.AnimationOnByDefault.false...format attr='animation-on' value='ao-on' />
+    </_.fcp.AnimationOnByDefault.false..._.fcp.MarkAnimation.true...style-rule>
+  </_.fcp.AnimationOnByDefault.false...style>
+  <datasources>
+    <datasource caption='Exam Scores A1:F6++ (Exam_Scores)' inline='true' name='federated.14uic1h15ggrv61b5c2o618lkzwo' version='18.1'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='Exam_Scores' name='excel-direct.1h5h2tn1eifbjw1ckx4y20k0ndp8'>
+            <connection class='excel-direct' cleaning='yes' compat='no' dataRefreshTime='' filename='C:/Users/ÖKTEN/Desktop/Data_Science/Data_Science/17- tableau/joıns/Union/Exam_Scores.xlsx' interpretationMode='1' password='' server='' validate='no' />
+          </named-connection>
+        </named-connections>
+        <_.fcp.ObjectModelEncapsulateLegacy.false...relation name='Pivot' type='pivot'>
+          <columns>
+            <column datatype='string' name='Pivot Field Names' />
+            <column datatype='integer' name='Pivot Field Values' />
+          </columns>
+          <tag name='Pivot Field Names'>
+            <value name='[Eng]' />
+            <value name='[History]' />
+            <value name='[Math]' />
+          </tag>
+          <groups>
+            <group name='Pivot Field Values'>
+              <field name='[Exam Scores A1:F6+].[Eng]' />
+              <field name='[Exam Scores A1:F6+].[History]' />
+              <field name='[Exam Scores A1:F6+].[Math]' />
+            </group>
+          </groups>
+          <relation type='project'>
+            <columns>
+              <column caption='Student Number' hidden='true' name='[Exam Scores A1:F6+].[Student Number]' />
+              <column caption='No' hidden='true' name='[Exam Scores A1:F6+].[No]' />
+              <column name='[Project].[No &amp; Student Number]' project-type='coalesce' />
+            </columns>
+            <bindings>
+              <binding expression='IF NOT ISNULL([Exam Scores A1:F6+].[Student Number]) THEN [Exam Scores A1:F6+].[Student Number]&#10;ELSEIF NOT ISNULL([Exam Scores A1:F6+].[No]) THEN [Exam Scores A1:F6+].[No]&#10;ELSE NULL&#10;END' name='[Project].[No &amp; Student Number]' />
+            </bindings>
+            <relation all='true' name='Exam Scores A1:F6+' type='union'>
+              <columns>
+                <column datatype='integer' name='Student Number' />
+                <column datatype='string' name='Gender' />
+                <column datatype='string' name='School Name' />
+                <column datatype='integer' name='Math' />
+                <column datatype='integer' name='Eng' />
+                <column datatype='integer' name='History' />
+                <column datatype='integer' name='No' />
+                <column datatype='string' name='Sheet' />
+                <column datatype='string' name='Table Name' />
+              </columns>
+              <relation connection='excel-direct.1h5h2tn1eifbjw1ckx4y20k0ndp8' name='Exam Scores A1:F6' table='[Exam Scores$A01:F06]' type='table'>
+                <columns gridOrigin='A1:F6:no:A1:F16:1' lost='0' outcome='1' processed='12'>
+                  <column datatype='integer' name='Student Number' ordinal='0' />
+                  <column datatype='string' name='Gender' ordinal='1' />
+                  <column datatype='string' name='School Name' ordinal='2' />
+                  <column datatype='integer' name='Math' ordinal='3' />
+                  <column datatype='integer' name='Eng' ordinal='4' />
+                  <column datatype='integer' name='History' ordinal='5' />
+                </columns>
+              </relation>
+              <relation connection='excel-direct.1h5h2tn1eifbjw1ckx4y20k0ndp8' name='Exam Scores A10:F14' table='[Exam Scores$A10:F14]' type='table'>
+                <columns gridOrigin='A10:F14:no:A1:F16:1' lost='0' outcome='1' processed='12'>
+                  <column datatype='integer' name='No' ordinal='0' />
+                  <column datatype='string' name='Gender' ordinal='1' />
+                  <column datatype='string' name='School Name' ordinal='2' />
+                  <column datatype='integer' name='Math' ordinal='3' />
+                  <column datatype='integer' name='Eng' ordinal='4' />
+                  <column datatype='integer' name='History' ordinal='5' />
+                </columns>
+              </relation>
+            </relation>
+          </relation>
+        </_.fcp.ObjectModelEncapsulateLegacy.false...relation>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...relation name='Pivot' type='pivot'>
+          <columns>
+            <column datatype='string' name='Pivot Field Names' />
+            <column datatype='integer' name='Pivot Field Values' />
+          </columns>
+          <tag name='Pivot Field Names'>
+            <value name='[Eng]' />
+            <value name='[History]' />
+            <value name='[Math]' />
+          </tag>
+          <groups>
+            <group name='Pivot Field Values'>
+              <field name='[Exam Scores A1:F6+].[Eng]' />
+              <field name='[Exam Scores A1:F6+].[History]' />
+              <field name='[Exam Scores A1:F6+].[Math]' />
+            </group>
+          </groups>
+          <relation type='project'>
+            <columns>
+              <column caption='Student Number' hidden='true' name='[Exam Scores A1:F6+].[Student Number]' />
+              <column caption='No' hidden='true' name='[Exam Scores A1:F6+].[No]' />
+              <column name='[Project].[No &amp; Student Number]' project-type='coalesce' />
+            </columns>
+            <bindings>
+              <binding expression='IF NOT ISNULL([Exam Scores A1:F6+].[Student Number]) THEN [Exam Scores A1:F6+].[Student Number]&#10;ELSEIF NOT ISNULL([Exam Scores A1:F6+].[No]) THEN [Exam Scores A1:F6+].[No]&#10;ELSE NULL&#10;END' name='[Project].[No &amp; Student Number]' />
+            </bindings>
+            <relation all='true' name='Exam Scores A1:F6+' type='union'>
+              <columns>
+                <column datatype='integer' name='Student Number' />
+                <column datatype='string' name='Gender' />
+                <column datatype='string' name='School Name' />
+                <column datatype='integer' name='Math' />
+                <column datatype='integer' name='Eng' />
+                <column datatype='integer' name='History' />
+                <column datatype='integer' name='No' />
+                <column datatype='string' name='Sheet' />
+                <column datatype='string' name='Table Name' />
+              </columns>
+              <relation connection='excel-direct.1h5h2tn1eifbjw1ckx4y20k0ndp8' name='Exam Scores A1:F6' table='[Exam Scores$A01:F06]' type='table'>
+                <columns gridOrigin='A1:F6:no:A1:F16:1' lost='0' outcome='1' processed='12'>
+                  <column datatype='integer' name='Student Number' ordinal='0' />
+                  <column datatype='string' name='Gender' ordinal='1' />
+                  <column datatype='string' name='School Name' ordinal='2' />
+                  <column datatype='integer' name='Math' ordinal='3' />
+                  <column datatype='integer' name='Eng' ordinal='4' />
+                  <column datatype='integer' name='History' ordinal='5' />
+                </columns>
+              </relation>
+              <relation connection='excel-direct.1h5h2tn1eifbjw1ckx4y20k0ndp8' name='Exam Scores A10:F14' table='[Exam Scores$A10:F14]' type='table'>
+                <columns gridOrigin='A10:F14:no:A1:F16:1' lost='0' outcome='1' processed='12'>
+                  <column datatype='integer' name='No' ordinal='0' />
+                  <column datatype='string' name='Gender' ordinal='1' />
+                  <column datatype='string' name='School Name' ordinal='2' />
+                  <column datatype='integer' name='Math' ordinal='3' />
+                  <column datatype='integer' name='Eng' ordinal='4' />
+                  <column datatype='integer' name='History' ordinal='5' />
+                </columns>
+              </relation>
+            </relation>
+          </relation>
+        </_.fcp.ObjectModelEncapsulateLegacy.true...relation>
+        <metadata-records>
+          <metadata-record class='capability'>
+            <remote-name />
+            <remote-type>0</remote-type>
+            <parent-name>[Exam Scores A1:F6+]</parent-name>
+            <remote-alias />
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>No &amp; Student Number</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[No &amp; Student Number]</local-name>
+            <parent-name>[Project]</parent-name>
+            <remote-alias>No &amp; Student Number</remote-alias>
+            <ordinal>0</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Gender</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[Gender]</local-name>
+            <parent-name>[Exam Scores A1:F6+]</parent-name>
+            <remote-alias>Gender</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <collation flag='1' name='LTR_RTR_S2' />
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>School Name</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[School Name]</local-name>
+            <parent-name>[Exam Scores A1:F6+]</parent-name>
+            <remote-alias>School Name</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <collation flag='1' name='LTR_RTR_S2' />
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Sheet</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[Sheet]</local-name>
+            <parent-name>[Exam Scores A1:F6+]</parent-name>
+            <remote-alias>Sheet</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <collation flag='1' name='LTR_RTR_S2' />
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Table Name</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[Table Name]</local-name>
+            <parent-name>[Exam Scores A1:F6+]</parent-name>
+            <remote-alias>Table Name</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <collation flag='1' name='LTR_RTR_S2' />
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Pivot Field Names</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[Pivot Field Names]</local-name>
+            <parent-name>[Pivot]</parent-name>
+            <remote-alias>Pivot Field Names</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Pivot Field Values</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[Pivot Field Values]</local-name>
+            <parent-name>[Pivot]</parent-name>
+            <remote-alias>Pivot Field Values</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <_.fcp.ObjectModelTableType.true...column caption='Exam Scores A1:F6' datatype='table' name='[__tableau_internal_object_id__].[Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908]' role='measure' type='quantitative' />
+      <layout _.fcp.SchemaViewerObjectModel.false...dim-percentage='0.5' _.fcp.SchemaViewerObjectModel.false...measure-percentage='0.4' dim-ordering='alphabetic' measure-ordering='alphabetic' show-structure='true' />
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;Turkey&quot;' />
+      </semantic-values>
+      <date-options start-of-week='monday' />
+      <_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+        <objects>
+          <object caption='Exam Scores A1:F6' id='Exam Scores$A01:F06_1E8B7CBBF0174349B472F0230FC4D908'>
+            <properties context=''>
+              <relation name='Pivot' type='pivot'>
+                <columns>
+                  <column datatype='string' name='Pivot Field Names' />
+                  <column datatype='integer' name='Pivot Field Values' />
+                </columns>
+                <tag name='Pivot Field Names'>
+                  <value name='[Eng]' />
+                  <value name='[History]' />
+                  <value name='[Math]' />
+                </tag>
+                <groups>
+                  <group name='Pivot Field Values'>
+                    <field name='[Exam Scores A1:F6+].[Eng]' />
+                    <field name='[Exam Scores A1:F6+].[History]' />
+                    <field name='[Exam Scores A1:F6+].[Math]' />
+                  </group>
+                </groups>
+                <relation type='project'>
+                  <columns>
+                    <column caption='Student Number' hidden='true' name='[Exam Scores A1:F6+].[Student Number]' />
+                    <column caption='No' hidden='true' name='[Exam Scores A1:F6+].[No]' />
+                    <column name='[Project].[No &amp; Student Number]' project-type='coalesce' />
+                  </columns>
+                  <bindings>
+                    <binding expression='IF NOT ISNULL([Exam Scores A1:F6+].[Student Number]) THEN [Exam Scores A1:F6+].[Student Number]&#10;ELSEIF NOT ISNULL([Exam Scores A1:F6+].[No]) THEN [Exam Scores A1:F6+].[No]&#10;ELSE NULL&#10;END' name='[Project].[No &amp; Student Number]' />
+                  </bindings>
+                  <relation all='true' name='Exam Scores A1:F6+' type='union'>
+                    <columns>
+                      <column datatype='integer' name='Student Number' />
+                      <column datatype='string' name='Gender' />
+                      <column datatype='string' name='School Name' />
+                      <column datatype='integer' name='Math' />
+                      <column datatype='integer' name='Eng' />
+                      <column datatype='integer' name='History' />
+                      <column datatype='integer' name='No' />
+                      <column datatype='string' name='Sheet' />
+                      <column datatype='string' name='Table Name' />
+                    </columns>
+                    <relation connection='excel-direct.1h5h2tn1eifbjw1ckx4y20k0ndp8' name='Exam Scores A1:F6' table='[Exam Scores$A01:F06]' type='table'>
+                      <columns gridOrigin='A1:F6:no:A1:F16:1' lost='0' outcome='1' processed='12'>
+                        <column datatype='integer' name='Student Number' ordinal='0' />
+                        <column datatype='string' name='Gender' ordinal='1' />
+                        <column datatype='string' name='School Name' ordinal='2' />
+                        <column datatype='integer' name='Math' ordinal='3' />
+                        <column datatype='integer' name='Eng' ordinal='4' />
+                        <column datatype='integer' name='History' ordinal='5' />
+                      </columns>
+                    </relation>
+                    <relation connection='excel-direct.1h5h2tn1eifbjw1ckx4y20k0ndp8' name='Exam Scores A10:F14' table='[Exam Scores$A10:F14]' type='table'>
+                      <columns gridOrigin='A10:F14:no:A1:F16:1' lost='0' outcome='1' processed='12'>
+                        <column datatype='integer' name='No' ordinal='0' />
+                        <column datatype='string' name='Gender' ordinal='1' />
+                        <column datatype='string' name='School Name' ordinal='2' />
+                        <column datatype='integer' name='Math' ordinal='3' />
+                        <column datatype='integer' name='Eng' ordinal='4' />
+                        <column datatype='integer' name='History' ordinal='5' />
+                      </columns>
+                    </relation>
+                  </relation>
+                </relation>
+              </relation>
+            </properties>
+          </object>
+        </objects>
+      </_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='pivot yaptık excelde data interpreter yaptık escele gidip baktık rewiew  resulttan'>
+      <table>
+        <view>
+          <datasources />
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+          </pane>
+        </panes>
+        <rows />
+        <cols />
+      </table>
+      <simple-id uuid='{EB17DDD4-94D4-44DC-97D2-DCBBB68AEDAF}' />
+    </worksheet>
+  </worksheets>
+  <windows source-height='30'>
+    <window class='worksheet' maximized='true' name='pivot yaptık excelde data interpreter yaptık escele gidip baktık rewiew  resulttan'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{89D1E76E-51B0-42E2-89C3-AC28BDE4E348}' />
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='192' name='pivot yaptık excelde data interpreter yaptık escele gidip baktık rewiew  resulttan' width='192'>
+      iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAAA7DAAAOwwHHb6hk
+      AAACFUlEQVR4nO3TMQEAIAzAMMC/5yFjRxMFfXpnZg5Eve0A2GQA0gxAmgFIMwBpBiDNAKQZ
+      gDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFI
+      MwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQD
+      kGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBp
+      BiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA
+      0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDN
+      AKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxA
+      mgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZ
+      gDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFI
+      MwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKQZgDQDkGYA0gxAmgFIMwBpBiDNAKR9Y+0F
+      fBUOM1sAAAAASUVORK5CYII=
+    </thumbnail>
+  </thumbnails>
+</workbook>
