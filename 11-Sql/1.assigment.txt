@@ -9,17 +9,21 @@ values
 (3,2,15,'2-15-20'),
 (1,4,5,'2-16-20')
 ​
+
 select * from dbo.transactions
 ​
+
 -- Sum amounts for each sender (debits) and 
 -- receiver (credits),
 -- sum amounts for each sender (debits) and receiver (credits)
 ​
+
 SELECT sender, sum(amount) AS debited
 INTO debits
 FROM dbo.transactions
 GROUP BY sender
 ​
+
 ​
 SELECT receiver, sum(amount) AS credited
 INTO credits
