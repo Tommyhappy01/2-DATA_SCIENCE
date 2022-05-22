@@ -1,12 +1,12 @@
------------SQL SERVER ÖNEMLİ KODLAR ---------------
+-----------SQL SERVER Ã–NEMLÄ° KODLAR ---------------
 -- kaynak:   https://www.sqlkodlari.com/31-sql-primary-key-kullanimi.asp
 -- Kaynak  : https://sqlserveregitimleri.com/sql-server-primary-key-constraint-kullanimi
 
 -- INDEX
 --		1. DATABASE CREATE ETME 
 --		2. TABLO CREATE ETME
---		3. INSERT INTO İLE TABLOYA VERİ GİRMEK
---		4. INSERT INTO İLE BİR TABLODAKİ VERİLERİ ALIP VAROLAN BİR TABLO İÇİNE KOPYALAMAK
+--		3. INSERT INTO Ä°LE TABLOYA VERÄ° GÄ°RMEK
+--		4. INSERT INTO Ä°LE BÄ°R TABLODAKÄ° VERÄ°LERÄ° ALIP VAROLAN BÄ°R TABLO Ä°Ã‡Ä°NE KOPYALAMAK
 --		5. PRIMARY KEY TANIMLAMAK
 --		6. PRIMARY KEY ALANINI KALDIRMAK
 --		7. FOREIGN KEY TANIMLAMAK
@@ -23,31 +23,32 @@
 
 
 -- 1. DATABASE CREATE ETME-----------------------------------------------------------------------------------
-	-- Bu işlemi yapabilmek için mevcut kullanıcımızın veritabanı oluşturma yetkisine sahip olması gerekmektedir.
+	-- Bu iÅŸlemi yapabilmek iÃ§in mevcut kullanÄ±cÄ±mÄ±zÄ±n veritabanÄ± oluÅŸturma yetkisine sahip olmasÄ± gerekmektedir.
 
 CREATE DATABASE veritabani_adi
 
 
 -- 2. TABLO CREATE ETME---------------------------------------------------------------------------------------
-	-- Bu işlemi yapabilmek için mevcut kullanıcımızın tablo oluşturma yetkisine sahip olması gerekmektedir.
+	-- Bu iÅŸlemi yapabilmek iÃ§in mevcut kullanÄ±cÄ±mÄ±zÄ±n tablo oluÅŸturma yetkisine sahip olmasÄ± gerekmektedir.
 
-CREATE TABLE tablo_adı
+CREATE TABLE tablo_adÄ±
 (
-alan_adi1 veri_tipi(boyut) Constraint_Adı,
+alan_adi1 veri_tipi(boyut) Constraint_AdÄ±,
 alan_adi2 veri_tipi(boyut),
 alan_adi3 veri_tipi(boyut),
 ....
 )
 -- CONSTRAINT'LER:
 
---NOT NULL   : Alanında boş geçilemeyeceğini belirtir.
---UNIQUE     : Bu alana girilecek verilerin hiç biri birbirine benzeyemez. Yani tekrarlı kayıt içeremez.
---PRIMERY KEY: Not Null ve Unique kriterlerinin her ikisini birden uygulanmasıdır.
---FOREIGN KEY: Başka bir tablodaki kayıtlarla eşleştirmek için alandaki kayıtların tutarlılığını belirtir.
---CHECK      : Alandaki değerlerin belli bir koşulu sağlaması için kullanılır.
---DEFAULT    : Alan için herhangi bir değer girilmezse, varsıyalan olarak bir değer giremeyi sağlar.
 
--- örnek:
+--NOT NULL   : AlanÄ±nda boÅŸ geÃ§ilemeyeceÄŸini belirtir.
+--UNIQUE     : Bu alana girilecek verilerin hiÃ§ biri birbirine benzeyemez. Yani tekrarlÄ± kayÄ±t iÃ§eremez.
+--PRIMERY KEY: Not Null ve Unique kriterlerinin her ikisini birden uygulanmasÄ±dÄ±r.
+--FOREIGN KEY: BaÅŸka bir tablodaki kayÄ±tlarla eÅŸleÅŸtirmek iÃ§in alandaki kayÄ±tlarÄ±n tutarlÄ±lÄ±ÄŸÄ±nÄ± belirtir.
+--CHECK      : Alandaki deÄŸerlerin belli bir koÅŸulu saÄŸlamasÄ± iÃ§in kullanÄ±lÄ±r.
+--DEFAULT    : Alan iÃ§in herhangi bir deÄŸer girilmezse, varsÄ±yalan olarak bir deÄŸer giremeyi saÄŸlar.
+
+-- Ã¶rnek:
 CREATE TABLE Personel
 (
 id int,
@@ -58,49 +59,49 @@ medeni_durum bolean
 )
 
 
--- 3. INSERT INTO İLE TABLOYA VERİ GİRMEK-----------------------------------------------------------------------
+-- 3. INSERT INTO Ä°LE TABLOYA VERÄ° GÄ°RMEK-----------------------------------------------------------------------
 
-	-- Burada dikkat edeceğimiz nokta eklenecek değer tablomuzdaki alan sırasına göre olmalıdır.
-	-- Values ifadesinden yazılacak değerler sırası ile işlenir.
+	-- Burada dikkat edeceÄŸimiz nokta eklenecek deÄŸer tablomuzdaki alan sÄ±rasÄ±na gÃ¶re olmalÄ±dÄ±r.
+	-- Values ifadesinden yazÄ±lacak deÄŸerler sÄ±rasÄ± ile iÅŸlenir.
 
 INSERT INTO  tablo_adi
 VALUES (deger1, deger2, ...)
 
--- diğer yöntem:
-	--Bu yöntemde ise eklenecek alanları ve değerleri kendimiz belirtiriz. 
-	-- Burada dikkat edilmesi gereken şey; yazdığımız alan adının sırasına göre değerleri eklememiz olacaktır.
+-- diÄŸer yÃ¶ntem:
+	--Bu yÃ¶ntemde ise eklenecek alanlarÄ± ve deÄŸerleri kendimiz belirtiriz. 
+	-- Burada dikkat edilmesi gereken ÅŸey; yazdÄ±ÄŸÄ±mÄ±z alan adÄ±nÄ±n sÄ±rasÄ±na gÃ¶re deÄŸerleri eklememiz olacaktÄ±r.
 INSERT INTO  tablo_adi (alan_adi1, alan_adi2, alan_adi3)
 VALUES (deger1, deger2, deger3)
 
---örnek1 (tablonun tüm sütunlarına veri girişi)
+--Ã¶rnek1 (tablonun tÃ¼m sÃ¼tunlarÄ±na veri giriÅŸi)
 INSERT INTO Personel 
-VALUES (3, 'Serkan ÖZGÜREL', 'Erzincan', 'Muhasebe', 3456789)
--- örnek2 (tablonun yalnızca 3 alanına veri girişi) 
+VALUES (3, 'Serkan Ã–ZGÃœREL', 'Erzincan', 'Muhasebe', 3456789)
+-- Ã¶rnek2 (tablonun yalnÄ±zca 3 alanÄ±na veri giriÅŸi) 
 INSERT INTO Personel (id, adi_soyadi, sehir)
-VALUES (3, 'Serkan ÖZGÜREL', 'Erzincan')
+VALUES (3, 'Serkan Ã–ZGÃœREL', 'Erzincan')
 
 
 
--- 4. INSERT INTO İLE BİR TABLODAKİ VERİLERİ ALIP VAROLAN BİR TABLO İÇİNE KOPYALAMAK-----------------------------
+-- 4. INSERT INTO Ä°LE BÄ°R TABLODAKÄ° VERÄ°LERÄ° ALIP VAROLAN BÄ°R TABLO Ä°Ã‡Ä°NE KOPYALAMAK-----------------------------
 
-	-- Hedefte belirttiğimiz tablonun var olması gerekmektedir. 
-	-- Hedef tabloda var olan alanlar silinmez. Var olan alanların yanına yeni alanlar eklenir.
+	-- Hedefte belirttiÄŸimiz tablonun var olmasÄ± gerekmektedir. 
+	-- Hedef tabloda var olan alanlar silinmez. Var olan alanlarÄ±n yanÄ±na yeni alanlar eklenir.
 
 INSERT INTO Hedef_tablo (alan_adi1,alan_adi2...)
 SELECT alan_adi1,alan_adi2...
 FROM tablo1
 
----- 4. a. Tüm sütunları kopyalama
+---- 4. a. TÃ¼m sÃ¼tunlarÄ± kopyalama
 INSERT INTO personel_yedek
 SELECT *
 FROM personel
 
----- 4. b. Sütun isimlerini değiştirerek kopyalama
+---- 4. b. SÃ¼tun isimlerini deÄŸiÅŸtirerek kopyalama
 INSERT INTO personel_yedek (isim, sehir)
 SELECT  ad_soyad, sehir
 FROM personel
 
----- 4. c. Belirli kriterlere göre kopyalama 
+---- 4. c. Belirli kriterlere gÃ¶re kopyalama 
 INSERT INTO istanbul_personelleri (isim)
 SELECT ad_soyad
 FROM personel
@@ -108,9 +109,9 @@ WHERE sehir='istanbul'
 
 -- 5. PRIMARY KEY TANIMLAMAK ----------------------------------------------------------------------------
 
------ 5. a. TABLO OLUŞTURURKEN TANIMLAMAK
+----- 5. a. TABLO OLUÅTURURKEN TANIMLAMAK
 
----------5. a. (1) sadece bir alanda kullanım biçimine örnek
+---------5. a. (1) sadece bir alanda kullanÄ±m biÃ§imine Ã¶rnek
 CREATE TABLE Personel
 (
 id int NOT NULL PRIMARY KEY,
@@ -118,7 +119,7 @@ adi_soyadi varchar(20) ,
 Sehir varchar(20)
 )
 
---------5. a. (2) birden fazla alanda kullanım biçimine örnek
+--------5. a. (2) birden fazla alanda kullanÄ±m biÃ§imine Ã¶rnek
 CREATE TABLE Personel
 (
 id int NOT NULL,
@@ -126,37 +127,37 @@ adi_soyadi varchar(20) NOT NULL ,
 Sehir varchar(20),
 CONSTRAINT id_no PRIMARY KEY  (id,adi_soyadi)
 )
--- Burada görüleceği üzere birden fazla alan PRIMARY KEY yapısı içine alınıyor. 
-	-- CONSTRAINT ifadesi ile bu işleme bir tanım giriliyor. Aslında bu tanım bizim tablomuzun index alanını oluşturmaktadır. 
-	-- İndexleme sayesinde tablomuzdaki verilerin bütülüğü daha sağlam olurken aramalarda da daha hızlı sonuçlar elde ederiz. 
-	-- Ayrıca kullandığınz uygulama geliştirme ortamlarında (ör .Net) tablo üzerinde daha etkin kullanım imkanınız olacaktır.
-	-- PRIMARY KEY ifadesinden sonra ise ilgili alanları virgül ile ayırarak yazarız.
+-- Burada gÃ¶rÃ¼leceÄŸi Ã¼zere birden fazla alan PRIMARY KEY yapÄ±sÄ± iÃ§ine alÄ±nÄ±yor. 
+	-- CONSTRAINT ifadesi ile bu iÅŸleme bir tanÄ±m giriliyor. AslÄ±nda bu tanÄ±m bizim tablomuzun index alanÄ±nÄ± oluÅŸturmaktadÄ±r. 
+	-- Ä°ndexleme sayesinde tablomuzdaki verilerin bÃ¼tÃ¼lÃ¼ÄŸÃ¼ daha saÄŸlam olurken aramalarda da daha hÄ±zlÄ± sonuÃ§lar elde ederiz. 
+	-- AyrÄ±ca kullandÄ±ÄŸÄ±nz uygulama geliÅŸtirme ortamlarÄ±nda (Ã¶r .Net) tablo Ã¼zerinde daha etkin kullanÄ±m imkanÄ±nÄ±z olacaktÄ±r.
+	-- PRIMARY KEY ifadesinden sonra ise ilgili alanlarÄ± virgÃ¼l ile ayÄ±rarak yazarÄ±z.
 
 
------5. b. PRIMARY KEY TANIMLAMAK (VAR OLAN BİR TABLOYA)
+-----5. b. PRIMARY KEY TANIMLAMAK (VAR OLAN BÄ°R TABLOYA)
 
---------5. b. (1) Sadece bir alanda (sütunda) kullanım biçimine örnek:
+--------5. b. (1) Sadece bir alanda (sÃ¼tunda) kullanÄ±m biÃ§imine Ã¶rnek:
 ALTER TABLE Personel
 ADD PRIMARY KEY (id)
 
 -- VEYA:
 ALTER TABLE Calisanlar
 ADD CONSTRAINT PK_CalisanID PRIMARY KEY (ID); 
---Kodu çalıştırdığımız zaman Calisanlar tablomuzdaki ID alanını Primary Key olarak yapmış oluyoruz. 
-	--PK_CalisanID ifadesi ise bu primary key ifadesine verdiğimiz isimdir. İstediğiniz ismi verebilirsiniz. 
-	-- Ben primary key alanı belli olsun diye PK ifadesi koydum ve 
-	-- sonrasında CalisanID diyerek çalışan id değeri olduğunu belirttim.
+--Kodu Ã§alÄ±ÅŸtÄ±rdÄ±ÄŸÄ±mÄ±z zaman Calisanlar tablomuzdaki ID alanÄ±nÄ± Primary Key olarak yapmÄ±ÅŸ oluyoruz. 
+	--PK_CalisanID ifadesi ise bu primary key ifadesine verdiÄŸimiz isimdir. Ä°stediÄŸiniz ismi verebilirsiniz. 
+	-- Ben primary key alanÄ± belli olsun diye PK ifadesi koydum ve 
+	-- sonrasÄ±nda CalisanID diyerek Ã§alÄ±ÅŸan id deÄŸeri olduÄŸunu belirttim.
 
 
---------5. b. (2) Birden fazla alanda (sütunda) kullanım biçimine örnek:
+--------5. b. (2) Birden fazla alanda (sÃ¼tunda) kullanÄ±m biÃ§imine Ã¶rnek:
 ALTER TABLE Personel
 ADD CONSTRAINT  id_no PRIMARY KEY (id,adi_soyadi)
 
--- Burada dikkat edilecek nokta; ALTER ile sonradan bir alana PRIMARY KEY kriteri tanımlanırken 
-	-- ilgili alanda veya alanlarda NULL yani boş kayıt olmamalıdır.
+-- Burada dikkat edilecek nokta; ALTER ile sonradan bir alana PRIMARY KEY kriteri tanÄ±mlanÄ±rken 
+	-- ilgili alanda veya alanlarda NULL yani boÅŸ kayÄ±t olmamalÄ±dÄ±r.
 
 
--------5. b. (3) Tabloya yeni bir sütun ekleyerek PRIMARY KEY tanımlamak:
+-------5. b. (3) Tabloya yeni bir sÃ¼tun ekleyerek PRIMARY KEY tanÄ±mlamak:
 ALTER TABLE market_fact
 ADD Market_ID INT PRIMARY KEY IDENTITY(1,1)
 
@@ -165,19 +166,19 @@ ADD Market_ID INT PRIMARY KEY IDENTITY(1,1)
 ALTER TABLE Personel
 DROP  CONSTRAINT id_no
 
---!!! Burada dikkat edilmesi gereken nokta eğer çoklu alanda PRIMARY KEY işlemi yaptıysak, 
-	-- CONSTRAINT ifadesinden sonra tablomuzdaki alan adı değil, oluşturduğumuz "index adı" yazılmalıdır. 
-	-- Eğer tek bir alanda oluşturduysak o zaman CONSTRAINT  ifadesinden sonra sadece alana adını yazabiliriz.
+--!!! Burada dikkat edilmesi gereken nokta eÄŸer Ã§oklu alanda PRIMARY KEY iÅŸlemi yaptÄ±ysak, 
+	-- CONSTRAINT ifadesinden sonra tablomuzdaki alan adÄ± deÄŸil, oluÅŸturduÄŸumuz "index adÄ±" yazÄ±lmalÄ±dÄ±r. 
+	-- EÄŸer tek bir alanda oluÅŸturduysak o zaman CONSTRAINT  ifadesinden sonra sadece alana adÄ±nÄ± yazabiliriz.
 
 
 -- 7. FOREIGN KEY TANIMLAMAK---------------------------------------------------------------------------------
 
-	--Temel olarak FOREIGN KEY yardımcı index oluşturmak için kullanılır. 
-	-- Bir tabloda "id" alanına PRIMARY KEY uygulayabiliriz. Ancak aynı tablodaki başka bir alan farklı bir tablodaki kayda bağlı çalışabilir
-	-- İşte bu iki tablo arasında bir bağ kurmak gerektiği durumlarda FOREIGN KEY devreye giriyor.
-	-- Böylece tablolar arası veri akışı daha hızlı olduğu gibi ileride artan kayıt sayısı sonucu veri bozulmalarının önüne geçilmiş olunur.
+	--Temel olarak FOREIGN KEY yardÄ±mcÄ± index oluÅŸturmak iÃ§in kullanÄ±lÄ±r. 
+	-- Bir tabloda "id" alanÄ±na PRIMARY KEY uygulayabiliriz. Ancak aynÄ± tablodaki baÅŸka bir alan farklÄ± bir tablodaki kayda baÄŸlÄ± Ã§alÄ±ÅŸabilir
+	-- Ä°ÅŸte bu iki tablo arasÄ±nda bir baÄŸ kurmak gerektiÄŸi durumlarda FOREIGN KEY devreye giriyor.
+	-- BÃ¶ylece tablolar arasÄ± veri akÄ±ÅŸÄ± daha hÄ±zlÄ± olduÄŸu gibi ileride artan kayÄ±t sayÄ±sÄ± sonucu veri bozulmalarÄ±nÄ±n Ã¶nÃ¼ne geÃ§ilmiÅŸ olunur.
 
------- 7. a. Tablo oluştururken FOREIGN KEY tanımlama:
+------ 7. a. Tablo oluÅŸtururken FOREIGN KEY tanÄ±mlama:
 CREATE TABLE Satislar
 (
 id int NOT NULL PRIMARY KEY,
@@ -185,12 +186,12 @@ Urun varchar(20) ,
 Satis_fiyati varchar(20),
 satan_id int CONSTRAINT fk_satici FOREIGN KEY References Personel(id)
 )
--- !! FOREIGN KEY tanımlaması yapılırken hangi tablodaki hangi alanla ilişkili oldğunu 
+-- !! FOREIGN KEY tanÄ±mlamasÄ± yapÄ±lÄ±rken hangi tablodaki hangi alanla iliÅŸkili oldÄŸunu 
 	-- REFERENCES ifadesinden sonra yazmak gerekir!!
---  CONSTRAINT ile ona bir isim veriliyor. Böylece daha sonra bu FOREIGN KEY yapısını kaldırmak istersek 
-	-- bu verdiğimiz ismi kullanmamız gerekecektir.
+--  CONSTRAINT ile ona bir isim veriliyor. BÃ¶ylece daha sonra bu FOREIGN KEY yapÄ±sÄ±nÄ± kaldÄ±rmak istersek 
+	-- bu verdiÄŸimiz ismi kullanmamÄ±z gerekecektir.
 
------- 7. b. Var olan tabloya FOREIGN KEY tanımlama:
+------ 7. b. Var olan tabloya FOREIGN KEY tanÄ±mlama:
 ALTER TABLE Satislar
 ADD CONSTRAIN fk_satici FOREIGN KEY (satan_id) REFERENCES Personel(id)
 
@@ -208,7 +209,7 @@ DROP  CONSTRAINT fk_satici
 
 --9. ALTER TABLE -----------------------------------------------------------------------------------------
 
----- 9. a. Sütun eklemek için:
+---- 9. a. SÃ¼tun eklemek iÃ§in:
 ALTER TABLE tablo_adi
 ADD alan_adi veri_tipi
 
@@ -216,11 +217,11 @@ ALTER TABLE dbo.doc_exa
 ADD column_b VARCHAR(20) NULL, 
 	column_c INT NULL ;
 
----- 9. b. Sütun silmek için:
+---- 9. b. SÃ¼tun silmek iÃ§in:
 ALTER TABLE tablo_adi
 DROP COLUMN alan_adi
 
----- 9. c. Sütun tipini değiştirmek:
+---- 9. c. SÃ¼tun tipini deÄŸiÅŸtirmek:
 ALTER TABLE tablo_adi
 ALTER COLUMN  alan_adi  veri_tipi
 
@@ -228,47 +229,47 @@ ALTER COLUMN  alan_adi  veri_tipi
 
 --10.  DROP -----------------------------------------------------------------------------------------------
 
-	-- DROP yapısı ile indexler, alanlar, tablolar ve veritabanları kolaylıkla silinebilir. 
-	-- DELETE yapısı ile karıştırılabilir. DELETE ile sadece tablomuzdaki kayıtları silebiliriz. 
-	-- Eğer tablomuzu veya veritabanımızı silmek istiyorsak DROP yapısını kullanmamız gerekmektedir.
+	-- DROP yapÄ±sÄ± ile indexler, alanlar, tablolar ve veritabanlarÄ± kolaylÄ±kla silinebilir. 
+	-- DELETE yapÄ±sÄ± ile karÄ±ÅŸtÄ±rÄ±labilir. DELETE ile sadece tablomuzdaki kayÄ±tlarÄ± silebiliriz. 
+	-- EÄŸer tablomuzu veya veritabanÄ±mÄ±zÄ± silmek istiyorsak DROP yapÄ±sÄ±nÄ± kullanmamÄ±z gerekmektedir.
 
 DROP INDEX tablo_adi.index_adi
 DROP TABLE tablo_adi
 DROP DATABASE veritabani_adi
 ALTER TABLE dbo.doc_exb DROP COLUMN column_b;
 
---TRUNCATE TABLE Kullanım Biçimi
-	--Eğer tablomuzu değilde sadece içindeki kayıtları silmek istiyorsak yani tablomuzun içini boşaltmak istiyorsak 
-	--aşağıdaki kodu kullanabiliriz:
+--TRUNCATE TABLE KullanÄ±m BiÃ§imi
+	--EÄŸer tablomuzu deÄŸilde sadece iÃ§indeki kayÄ±tlarÄ± silmek istiyorsak yani tablomuzun iÃ§ini boÅŸaltmak istiyorsak 
+	--aÅŸaÄŸÄ±daki kodu kullanabiliriz:
 TRUNCATE TABLE tablo_adi
---Truncate yapısında parametre girilmez direkt olarak tüm kayıtları siler. Yeni kayıt yapılırsa numarası 1 den başlar.
--- Delete ile bütün kayıtları sildiğimiz zaman otomatik numara sırası baştan başlamaz.
-	-- örneğin 150 kayıt silindiğinde ve yeni kayıt eklediğimizde bu 151 olur.
+--Truncate yapÄ±sÄ±nda parametre girilmez direkt olarak tÃ¼m kayÄ±tlarÄ± siler. Yeni kayÄ±t yapÄ±lÄ±rsa numarasÄ± 1 den baÅŸlar.
+-- Delete ile bÃ¼tÃ¼n kayÄ±tlarÄ± sildiÄŸimiz zaman otomatik numara sÄ±rasÄ± baÅŸtan baÅŸlamaz.
+	-- Ã¶rneÄŸin 150 kayÄ±t silindiÄŸinde ve yeni kayÄ±t eklediÄŸimizde bu 151 olur.
 
 
 
 --11. DELETE -------------------------------------------------------------------------------------------
 
-	-- Burada dikkat edilecek nokta WHERE ifadesi ile belli bir kayıt seçilip silinir. 
-	-- Eğer WHERE ifadesini kullanmadan yaparsak tablodaki bütün kayıtları silmiş oluruz.
+	-- Burada dikkat edilecek nokta WHERE ifadesi ile belli bir kayÄ±t seÃ§ilip silinir. 
+	-- EÄŸer WHERE ifadesini kullanmadan yaparsak tablodaki bÃ¼tÃ¼n kayÄ±tlarÄ± silmiÅŸ oluruz.
 
 DELETE  FROM tablo_adi
 WHERE secilen_alan_adi=alan_degeri
 
 DELETE FROM Personel 
-WHERE Sehir='İstanbul'
+WHERE Sehir='Ä°stanbul'
 AND id = 3
 
 
 
 --12. CONVERT KULLANIMI-----------------------------------------------------------------------------------
-	--tarih alanını farklı biçimlerde ekrana yazdırmak için:
+	--tarih alanÄ±nÄ± farklÄ± biÃ§imlerde ekrana yazdÄ±rmak iÃ§in:
 
 SELECT  CONVERT(hedef_veri_tipi, alan_adi, gosterim_formati)
 FROM tablo_adi
 
--- örnek:
-SELECT ad_soyad, CONVERT(VARCHAR(11), dogum_tar, 106) AS [Doğum Tarihi] 
+-- Ã¶rnek:
+SELECT ad_soyad, CONVERT(VARCHAR(11), dogum_tar, 106) AS [DoÄŸum Tarihi] 
 FROM Personel
 
 CONVERT(VARCHAR(19),GETDATE())
@@ -278,7 +279,7 @@ CONVERT(VARCHAR(11),GETDATE(),6)
 CONVERT(VARCHAR(11),GETDATE(),106)
 CONVERT(VARCHAR(24),GETDATE(),113)
 
-Çıktısı:
+Ã‡Ä±ktÄ±sÄ±:
 Nov 04 2014 11:45 PM
 11-04-14
 11-04-2014
@@ -290,12 +291,12 @@ Nov 04 2014 11:45 PM
 
 -- 13. CREATE VIEW ...AS ---------------------------------------------------------------------------------
 
----- 13. a. Yeni VIEW oluşturmak:
+---- 13. a. Yeni VIEW oluÅŸturmak:
 CREATE VIEW view_adi AS
 Select * From Tablo_adi
 Where sorgulama_sartlari
 
----- 13. b. Var olan bir VIEW üzerinde değişiklik yapmak (CREATE OR REPLACE VIEW .. AS)
+---- 13. b. Var olan bir VIEW Ã¼zerinde deÄŸiÅŸiklik yapmak (CREATE OR REPLACE VIEW .. AS)
 CREATE OR REPLACE VIEW view_adi AS
 Select * From Tablo_adi
 Where sorgulama_sartlari
@@ -306,28 +307,28 @@ DROP VIEW view_adi
 
 -- 14. CTE - COMMON TABLE ESPRESSIONS ------------------------------------------------------------------
 
--- Subquery mantığı ile aynı. Subquery'de içerde bir tablo ile ilgileniyorduk CTE'de yukarda yazıyoruz.
+-- Subquery mantÄ±ÄŸÄ± ile aynÄ±. Subquery'de iÃ§erde bir tablo ile ilgileniyorduk CTE'de yukarda yazÄ±yoruz.
 
---(CTE), başka bir SELECT, INSERT, DELETE veya UPDATE deyiminde başvurabileceğiniz veya içinde kullanabileceğiniz geçici bir sonuç kümesidir. 
--- Başka bir SQL sorgusu içinde tanımlayabileceğiniz bir sorgudur. Bu nedenle, diğer sorgular CTE'yi bir tablo gibi kullanabilir. 
--- CTE, daha büyük bir sorguda kullanılmak üzere yardımcı ifadeler yazmamızı sağlar.
+--(CTE), baÅŸka bir SELECT, INSERT, DELETE veya UPDATE deyiminde baÅŸvurabileceÄŸiniz veya iÃ§inde kullanabileceÄŸiniz geÃ§ici bir sonuÃ§ kÃ¼mesidir. 
+-- BaÅŸka bir SQL sorgusu iÃ§inde tanÄ±mlayabileceÄŸiniz bir sorgudur. Bu nedenle, diÄŸer sorgular CTE'yi bir tablo gibi kullanabilir. 
+-- CTE, daha bÃ¼yÃ¼k bir sorguda kullanÄ±lmak Ã¼zere yardÄ±mcÄ± ifadeler yazmamÄ±zÄ± saÄŸlar.
 
 
 -----14. a. ORDINARY CTE
 
-	--subquery den hiç bir farkı yok. subquery içerde kullanılıyor, Ordinary CTE yukarda WITH ile oluşturuluyor.
+	--subquery den hiÃ§ bir farkÄ± yok. subquery iÃ§erde kullanÄ±lÄ±yor, Ordinary CTE yukarda WITH ile oluÅŸturuluyor.
 
 WITH query_name [(column_name1, ....)] AS
 	(SELECT ....)   -- CTE Definition
 
 SQL_Statement
 
--- sadece WITH kısmını yazarsan tek başına çalışmaz. WITH ile belirttiğim query'yi birazdan kullanacağım demek bu. 
--- asıl SQL statement içinde bunu kullanıyoruz.
+-- sadece WITH kÄ±smÄ±nÄ± yazarsan tek baÅŸÄ±na Ã§alÄ±ÅŸmaz. WITH ile belirttiÄŸim query'yi birazdan kullanacaÄŸÄ±m demek bu. 
+-- asÄ±l SQL statement iÃ§inde bunu kullanÄ±yoruz.
 
 ---- 14. B. RECURSIVE CTE
 
-	-- UNION ALL ile kullanılıyor.
+	-- UNION ALL ile kullanÄ±lÄ±yor.
 
 WITH table_name (colum_list)
 AS
@@ -342,21 +343,21 @@ AS
 SELECT *
 FROM table_name
 
--- WITH ile yukarda tablo oluşturuyor, aşağıda da SELECT FROM ile bu tabloyu kullanıyor
+-- WITH ile yukarda tablo oluÅŸturuyor, aÅŸaÄŸÄ±da da SELECT FROM ile bu tabloyu kullanÄ±yor
 
 
 
 
 --15. CREATE INDEX--------------------------------------------------------------------------------------------
 
-	-- Eğer tablomuza index tanımı yaparsak yazacağımız uygulamada kayıt arama esnasında bütün veritabanını taramak yerine
-	-- indexleri kullanarak daha hızlı sonuçlar elde ederiz
+	-- EÄŸer tablomuza index tanÄ±mÄ± yaparsak yazacaÄŸÄ±mÄ±z uygulamada kayÄ±t arama esnasÄ±nda bÃ¼tÃ¼n veritabanÄ±nÄ± taramak yerine
+	-- indexleri kullanarak daha hÄ±zlÄ± sonuÃ§lar elde ederiz
 
-	-- Tekrar eden değerlere sahip alana index tanımı yapılacaksa:
+	-- Tekrar eden deÄŸerlere sahip alana index tanÄ±mÄ± yapÄ±lacaksa:
 CREATE INDEX index_adi
 ON tablo_adi(alan_adi)
 
-	-- "id" gibi tekrar etmeyen numaraları barındıran bir alana index tanımı yapılacak ise :
+	-- "id" gibi tekrar etmeyen numaralarÄ± barÄ±ndÄ±ran bir alana index tanÄ±mÄ± yapÄ±lacak ise :
 CREATE UNIQUE INDEX index_adi
 ON tablo_adi(alan_adi)
 
@@ -367,31 +368,31 @@ ON tablo_adi(alan_adi)
 
 SELECT *
 FROM Personel 
-WHERE Sehir LIKE 'İ%'
---Sehir alanında İ harfi ile başlayan kayıtlar seçilmiştir. 
+WHERE Sehir LIKE 'Ä°%'
+--Sehir alanÄ±nda Ä° harfi ile baÅŸlayan kayÄ±tlar seÃ§ilmiÅŸtir. 
 SELECT *
 FROM Personel 
-WHERE Bolum LIKE '%Yönetici%'
---Bolum alanının herhangi bir yerinde (başında, ortasında veya sonunda) Yönetici kelimesini seçer.
+WHERE Bolum LIKE '%YÃ¶netici%'
+--Bolum alanÄ±nÄ±n herhangi bir yerinde (baÅŸÄ±nda, ortasÄ±nda veya sonunda) YÃ¶netici kelimesini seÃ§er.
 SELECT *
 FROM Personel 
-WHERE Bolum NOT LIKE '%Yönetici%'
---Bolum alanının herhangi bir yerinde Yönetici yazmayan kayıtları seçer
+WHERE Bolum NOT LIKE '%YÃ¶netici%'
+--Bolum alanÄ±nÄ±n herhangi bir yerinde YÃ¶netici yazmayan kayÄ±tlarÄ± seÃ§er
 SELECT *
 FROM Personel 
-WHERE Sehir  LIKE 'İzmi_'
---İzmi ile başlayan ve son harfi ne olursa olsun farketmeyen
+WHERE Sehir  LIKE 'Ä°zmi_'
+--Ä°zmi ile baÅŸlayan ve son harfi ne olursa olsun farketmeyen
 SELECT *
 FROM Personel 
 WHERE Adi_soyadi  LIKE '[S,A]%'
---ilk harfi S veya A ile başlayan kayıtları seçer. 
+--ilk harfi S veya A ile baÅŸlayan kayÄ±tlarÄ± seÃ§er. 
 SELECT *
 FROM Personel 
 WHERE Adi_soyadi  LIKE '[A-K]%'
---ilk harfi A ile K harfleri arasında ki herhangi bir harf ile başlayan
+--ilk harfi A ile K harfleri arasÄ±nda ki herhangi bir harf ile baÅŸlayan
 SELECT *
 FROM Personel 
 WHERE Adi_soyadi  LIKE '%[A-K]'
--- A ile K harfleri arasında ki herhangi bir harf ile biten
+-- A ile K harfleri arasÄ±nda ki herhangi bir harf ile biten
 
 
